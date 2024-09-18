@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:platform_game/components/gamepad.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
-import 'package:platform_game/game/figthers/ken.dart';
 import 'package:platform_game/game/figthers/ryu.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
@@ -23,7 +23,7 @@ class _GameStageState extends State<GameStage> {
     position: Vector(100, GameData.STAGE_FLOOR),
     direction: FighterDir.RIGTH,
   );
-  final ken = Ken(
+  final ken = Ryu(
     position: Vector(600, GameData.STAGE_FLOOR),
     direction: FighterDir.LEFT,
   );
@@ -59,46 +59,105 @@ class _GameStageState extends State<GameStage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text("FPS: ${frameTime.fps}")),
         backgroundColor: const Color(0xFF3f3851),
-        body: Column(
-          children: [
-            ColoredBox(
-              color: Colors.black,
-              child: CustomPaint(
-                size: GameData.GAME_VIEWPORT,
-                painter: KenStage(
-                  frameTime: frameTime,
-                  figthers: [ryu],
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          title: Text("FPS: ${frameTime.fps}"),
+          backgroundColor: const Color(0xFF3f3851),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Focus(
+                autofocus: true,
+                onKeyEvent: keyListenner,
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: CustomPaint(
+                    size: GameData.GAME_VIEWPORT,
+                    painter: KenStage(
+                      frameTime: frameTime,
+                      player1: ryu,
+                      player2: ken,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              width: 400.0,
-              child: Gamepad(
-                onTapUp: () {
-                  ryu.changeState(FighterState.JUMP_UP);
-                },
-                onTapLeft: () {
-                  ryu.changeState(FighterState.WALK_BACK);
-                },
-                onTapDown: () {
-                  ryu.changeState(FighterState.CROUCH_DOWN);
-                },
-                onTapRight: () {
-                  ryu.changeState(FighterState.WALK_FRONT);
-                },
-                onTapX: () {
-                  ryu.changeState(FighterState.JUMP_FRONT);
-                },
-                onTapY: () {},
-                onTapA: () {},
-                onTapB: () {},
-              ),
-            )
-          ],
+              SizedBox(
+                width: 400.0,
+                child: Gamepad(
+                  onTapUp: GamePadAction(
+                    onUp: () {
+                      ryu.arrowUp = false;
+                    },
+                    onDown: () {
+                      ryu.arrowUp = true;
+                    },
+                  ),
+                  onTapLeft: GamePadAction(
+                    onUp: () {
+                      ryu.arrowLeft = false;
+                      ken.arrowLeft = false;
+                    },
+                    onDown: () {
+                      ryu.arrowLeft = true;
+                      ken.arrowLeft = true;
+                    },
+                  ),
+                  onTapDown: GamePadAction(
+                    onUp: () {},
+                    onDown: () {},
+                  ),
+                  onTapRight: GamePadAction(
+                    onUp: () {
+                      ryu.arrowRight = false;
+                      ken.arrowRight = false;
+                    },
+                    onDown: () {
+                      ryu.arrowRight = true;
+                      ken.arrowRight = true;
+                    },
+                  ),
+                  onTapX: GamePadAction(
+                    onUp: () {},
+                    onDown: () {},
+                  ),
+                  onTapY: GamePadAction(
+                    onUp: () {},
+                    onDown: () {},
+                  ),
+                  onTapA: GamePadAction(
+                    onUp: () {},
+                    onDown: () {},
+                  ),
+                  onTapB: GamePadAction(
+                    onUp: () {},
+                    onDown: () {},
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  KeyEventResult keyListenner(FocusNode node, KeyEvent event) {
+    final pressed = HardwareKeyboard.instance.isLogicalKeyPressed(
+      event.logicalKey,
+    );
+
+    if (event.logicalKey == LogicalKeyboardKey.keyW) {
+      ryu.arrowUp = pressed;
+    } else if (event.logicalKey == LogicalKeyboardKey.keyA) {
+      ryu.arrowLeft = pressed;
+    } else if (event.logicalKey == LogicalKeyboardKey.keyD) {
+      ryu.arrowRight = pressed;
+    } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
+      ryu.arrowDown = pressed;
+    }
+
+    return KeyEventResult.handled;
   }
 }

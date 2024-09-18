@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 
-class Gamepad extends StatelessWidget {
-  final VoidCallback onTapUp;
-  final VoidCallback onTapDown;
-  final VoidCallback onTapLeft;
-  final VoidCallback onTapRight;
+class GamePadAction {
+  final VoidCallback onUp;
+  final VoidCallback onDown;
 
-  final VoidCallback onTapA;
-  final VoidCallback onTapB;
-  final VoidCallback onTapX;
-  final VoidCallback onTapY;
+  GamePadAction({
+    required this.onUp,
+    required this.onDown,
+  });
+}
+
+class Gamepad extends StatelessWidget {
+  final GamePadAction onTapUp;
+  final GamePadAction onTapDown;
+  final GamePadAction onTapLeft;
+  final GamePadAction onTapRight;
+
+  final GamePadAction onTapA;
+  final GamePadAction onTapB;
+  final GamePadAction onTapX;
+  final GamePadAction onTapY;
 
   const Gamepad({
     super.key,
-    required this.onTapDown,
     required this.onTapUp,
+    required this.onTapDown,
     required this.onTapLeft,
     required this.onTapRight,
     required this.onTapA,
@@ -36,58 +46,26 @@ class Gamepad extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Colors.grey.shade900,
-                    ),
-                    foregroundColor: const WidgetStatePropertyAll(
-                      Colors.white,
-                    ),
-                  ),
-                  icon: const Icon(Icons.expand_less),
-                  onPressed: onTapUp,
+                _buildButton(
+                  child: const Icon(Icons.expand_less),
+                  onTap: onTapUp,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Colors.grey.shade900,
-                        ),
-                        foregroundColor: const WidgetStatePropertyAll(
-                          Colors.white,
-                        ),
-                      ),
-                      icon: const Icon(Icons.navigate_before),
-                      onPressed: onTapLeft,
+                    _buildButton(
+                      child: const Icon(Icons.navigate_before),
+                      onTap: onTapLeft,
                     ),
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Colors.grey.shade900,
-                        ),
-                        foregroundColor: const WidgetStatePropertyAll(
-                          Colors.white,
-                        ),
-                      ),
-                      icon: const Icon(Icons.navigate_next),
-                      onPressed: onTapRight,
+                    _buildButton(
+                      child: const Icon(Icons.navigate_next),
+                      onTap: onTapRight,
                     ),
                   ],
                 ),
-                IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Colors.grey.shade900,
-                    ),
-                    foregroundColor: const WidgetStatePropertyAll(
-                      Colors.white,
-                    ),
-                  ),
-                  icon: const Icon(Icons.expand_more),
-                  onPressed: onTapDown,
+                _buildButton(
+                  child: const Icon(Icons.expand_more),
+                  onTap: onTapDown,
                 ),
               ],
             ),
@@ -97,63 +75,51 @@ class Gamepad extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Colors.grey.shade900,
-                    ),
-                    foregroundColor: const WidgetStatePropertyAll(
-                      Colors.white,
-                    ),
-                  ),
-                  icon: const Text('X', style: style),
-                  onPressed: onTapX,
+                _buildButton(
+                  child: const Text('X', style: style),
+                  onTap: onTapX,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Colors.grey.shade900,
-                        ),
-                        foregroundColor: const WidgetStatePropertyAll(
-                          Colors.white,
-                        ),
-                      ),
-                      icon: const Text('Y', style: style),
-                      onPressed: onTapY,
+                    _buildButton(
+                      child: const Text('Y', style: style),
+                      onTap: onTapY,
                     ),
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Colors.grey.shade900,
-                        ),
-                        foregroundColor: const WidgetStatePropertyAll(
-                          Colors.white,
-                        ),
-                      ),
-                      icon: const Text('A', style: style),
-                      onPressed: onTapA,
+                    _buildButton(
+                      child: const Text('A', style: style),
+                      onTap: onTapA,
                     ),
                   ],
                 ),
-                IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Colors.grey.shade900,
-                    ),
-                    foregroundColor: const WidgetStatePropertyAll(
-                      Colors.white,
-                    ),
-                  ),
-                  icon: const Text('B', style: style),
-                  onPressed: onTapB,
+                _buildButton(
+                  child: const Text('B', style: style),
+                  onTap: onTapB,
                 ),
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildButton({
+    required Widget child,
+    required GamePadAction onTap,
+  }) {
+    return InkWell(
+      onTapUp: (_) {
+        onTap.onUp();
+      },
+      onTapDown: (_) {
+        onTap.onDown();
+      },
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.grey.shade900,
+        foregroundColor: Colors.white,
+        child: child,
       ),
     );
   }

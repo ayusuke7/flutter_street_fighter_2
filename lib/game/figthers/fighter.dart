@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
 import 'package:platform_game/game/types/frame_time.dart';
+import 'package:platform_game/game/types/key_map.dart';
 import 'package:platform_game/game/types/sprite_sheet.dart';
 import 'package:platform_game/game/types/vector.dart';
 
-abstract class Fighter {
+abstract class Fighter with KeyMap {
   final SpriteSheetData spriteSheetData;
   final Vector velocity = Vector(0, 0);
   final Vector position;
@@ -33,16 +34,6 @@ abstract class Fighter {
 
   Sprite get currentAnimationFrame {
     return currentAnimation[animationFrame];
-  }
-
-  void changeState(FighterState newState) {
-    if (newState == fighterState) return;
-    // or !validFrom.contains(fighterState)
-
-    fighterState = newState;
-    animationFrame = 0;
-
-    _initState();
   }
 
   void update(Size size, FrameTime time) {
@@ -79,6 +70,15 @@ abstract class Fighter {
     // _debug(canvas);
   }
 
+  void _changeState(FighterState newState) {
+    if (newState == fighterState || !fighterState.validStates.contains(newState)) return;
+
+    fighterState = newState;
+    animationFrame = 0;
+
+    _initState();
+  }
+
   void _initState() {
     switch (fighterState) {
       case FighterState.IDLE:
@@ -86,21 +86,21 @@ abstract class Fighter {
         velocity.y = 0;
         break;
       case FighterState.WALK_FRONT:
-        velocity.x = FighterData.VELOCITY * direction.side;
+        velocity.x = FighterData.WALK_FRONT;
         break;
       case FighterState.WALK_BACK:
-        velocity.x = -FighterData.VELOCITY * direction.side;
+        velocity.x = -FighterData.WALK_BACK;
         break;
       case FighterState.JUMP_UP:
         velocity.y = -FighterData.JUMP_UP;
         break;
       case FighterState.JUMP_FRONT:
-        velocity.y = FighterData.JUMP_FRONT;
-        velocity.x = FighterData.VELOCITY * direction.side;
+        velocity.y = -FighterData.JUMP_UP;
+        velocity.x = FighterData.JUMP_FRONT;
         break;
       case FighterState.JUMP_BACK:
-        velocity.y = -FighterData.JUMP_BACK;
-        velocity.x = -FighterData.VELOCITY * direction.side;
+        velocity.y = -FighterData.JUMP_UP;
+        velocity.x = -FighterData.JUMP_BACK;
         break;
       default:
         break;
@@ -109,21 +109,48 @@ abstract class Fighter {
 
   void _updateState(FrameTime time) {
     switch (fighterState) {
+      case FighterState.IDLE:
+        if (arrowRight) {
+          _changeState(FighterState.WALK_FRONT);
+        } else if (arrowLeft) {
+          _changeState(FighterState.WALK_BACK);
+        } else if (arrowUp) {
+          _changeState(FighterState.JUMP_UP);
+        }
+        break;
+      case FighterState.WALK_FRONT:
+        if (!arrowRight) {
+          _changeState(FighterState.IDLE);
+        }
+        if (arrowUp) {
+          _changeState(FighterState.JUMP_FRONT);
+        }
+        break;
+      case FighterState.WALK_BACK:
+        if (!arrowLeft) {
+          _changeState(FighterState.IDLE);
+        }
+        if (arrowUp) {
+          _changeState(FighterState.JUMP_BACK);
+        }
+        break;
       case FighterState.JUMP_UP:
+      case FighterState.JUMP_FRONT:
+      case FighterState.JUMP_BACK:
         velocity.y += gravity * time.secondsPassed;
         if (position.y > GameData.STAGE_FLOOR) {
           position.y = GameData.STAGE_FLOOR;
-          changeState(FighterState.IDLE);
+          _changeState(FighterState.IDLE);
         }
         break;
       case FighterState.CROUCH_UP:
         if (currentAnimationFrame.delay == -2) {
-          changeState(FighterState.IDLE);
+          _changeState(FighterState.IDLE);
         }
         break;
       case FighterState.CROUCH_DOWN:
         if (currentAnimationFrame.delay == -2) {
-          changeState(FighterState.CROUCH);
+          _changeState(FighterState.CROUCH);
         }
         break;
       default:
@@ -134,14 +161,14 @@ abstract class Fighter {
   void _updateAnimation(FrameTime time) {
     final frameDelay = currentAnimationFrame.delay;
 
-    if (time.previous > animationTimer + 60) {
+    if (time.previous > animationTimer + frameDelay) {
       animationTimer = time.previous;
 
       if (frameDelay > 0) {
         animationFrame++;
       }
 
-      if (animationFrame > currentAnimation.length - 1) {
+      if (animationFrame >= currentAnimation.length) {
         animationFrame = 0;
       }
     }
