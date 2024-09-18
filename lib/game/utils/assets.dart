@@ -7,8 +7,8 @@ abstract class AssetsUtil {
   static late ui.Image kenSpriteSheet;
 
   static Future<void> loadImages() async {
-    ryuSpriteSheet = await _loadImage('images/ryu.png');
-    kenSpriteSheet = await _loadImage('images/ken.png');
+    ryuSpriteSheet = await _loadImage('assets/images/ryu.png');
+    kenSpriteSheet = await _loadImage('assets/images/ken.png');
   }
 
   static Future<ui.Image> _loadImage(String imageAssetPath) async {
