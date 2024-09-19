@@ -1,11 +1,11 @@
 mixin KeyMap {
-  bool arrowUp = false;
-  bool arrowDown = false;
-  bool arrowLeft = false;
-  bool arrowRight = false;
+  bool keyUp = false;
+  bool keyDown = false;
+  bool keyLeft = false;
+  bool keyRight = false;
 
-  bool buttonA = false;
-  bool buttonB = false;
-  bool buttonX = false;
-  bool buttonY = false;
+  bool keyA = false;
+  bool keyB = false;
+  bool keyX = false;
+  bool keyY = false;
 }

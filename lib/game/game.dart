@@ -88,51 +88,43 @@ class _GameStageState extends State<GameStage> {
                 child: Gamepad(
                   onTapUp: GamePadAction(
                     onUp: () {
-                      ryu.arrowUp = false;
+                      ryu.keyUp = false;
                     },
                     onDown: () {
-                      ryu.arrowUp = true;
+                      ryu.keyUp = true;
                     },
                   ),
                   onTapLeft: GamePadAction(
                     onUp: () {
-                      ryu.arrowLeft = false;
-                      ken.arrowLeft = false;
+                      ryu.keyLeft = false;
                     },
                     onDown: () {
-                      ryu.arrowLeft = true;
-                      ken.arrowLeft = true;
+                      ryu.keyLeft = true;
                     },
                   ),
                   onTapDown: GamePadAction(
-                    onUp: () {},
-                    onDown: () {},
+                    onUp: () {
+                      ryu.keyDown = false;
+                    },
+                    onDown: () {
+                      ryu.keyDown = true;
+                    },
                   ),
                   onTapRight: GamePadAction(
                     onUp: () {
-                      ryu.arrowRight = false;
-                      ken.arrowRight = false;
+                      ryu.keyRight = false;
                     },
                     onDown: () {
-                      ryu.arrowRight = true;
-                      ken.arrowRight = true;
+                      ryu.keyRight = true;
                     },
                   ),
                   onTapX: GamePadAction(
-                    onUp: () {},
-                    onDown: () {},
-                  ),
-                  onTapY: GamePadAction(
-                    onUp: () {},
-                    onDown: () {},
-                  ),
-                  onTapA: GamePadAction(
-                    onUp: () {},
-                    onDown: () {},
-                  ),
-                  onTapB: GamePadAction(
-                    onUp: () {},
-                    onDown: () {},
+                    onUp: () {
+                      ryu.keyX = false;
+                    },
+                    onDown: () {
+                      ryu.keyX = true;
+                    },
                   ),
                 ),
               )
@@ -149,13 +141,13 @@ class _GameStageState extends State<GameStage> {
     );
 
     if (event.logicalKey == LogicalKeyboardKey.keyW) {
-      ryu.arrowUp = pressed;
+      ryu.keyUp = pressed;
     } else if (event.logicalKey == LogicalKeyboardKey.keyA) {
-      ryu.arrowLeft = pressed;
+      ryu.keyLeft = pressed;
     } else if (event.logicalKey == LogicalKeyboardKey.keyD) {
-      ryu.arrowRight = pressed;
+      ryu.keyRight = pressed;
     } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
-      ryu.arrowDown = pressed;
+      ryu.keyDown = pressed;
     }
 
     return KeyEventResult.handled;

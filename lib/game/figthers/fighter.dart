@@ -63,10 +63,8 @@ abstract class Fighter with KeyMap {
       ),
       Paint(),
     );
-
     final matrix = Matrix4.identity();
     canvas.transform(matrix.storage);
-
     // _debug(canvas);
   }
 
@@ -110,27 +108,27 @@ abstract class Fighter with KeyMap {
   void _updateState(FrameTime time) {
     switch (fighterState) {
       case FighterState.IDLE:
-        if (arrowRight) {
+        if (keyRight) {
           _changeState(FighterState.WALK_FRONT);
-        } else if (arrowLeft) {
+        } else if (keyLeft) {
           _changeState(FighterState.WALK_BACK);
-        } else if (arrowUp) {
+        } else if (keyUp) {
           _changeState(FighterState.JUMP_UP);
+        } else if (keyDown) {
+          _changeState(FighterState.CROUCH_DOWN);
         }
         break;
       case FighterState.WALK_FRONT:
-        if (!arrowRight) {
+        if (!keyRight) {
           _changeState(FighterState.IDLE);
-        }
-        if (arrowUp) {
+        } else if (keyUp) {
           _changeState(FighterState.JUMP_FRONT);
         }
         break;
       case FighterState.WALK_BACK:
-        if (!arrowLeft) {
+        if (!keyLeft) {
           _changeState(FighterState.IDLE);
-        }
-        if (arrowUp) {
+        } else if (keyUp) {
           _changeState(FighterState.JUMP_BACK);
         }
         break;
@@ -144,13 +142,12 @@ abstract class Fighter with KeyMap {
         }
         break;
       case FighterState.CROUCH_UP:
-        if (currentAnimationFrame.delay == -2) {
-          _changeState(FighterState.IDLE);
-        }
-        break;
       case FighterState.CROUCH_DOWN:
         if (currentAnimationFrame.delay == -2) {
           _changeState(FighterState.CROUCH);
+        }
+        if (!keyDown) {
+          _changeState(FighterState.IDLE);
         }
         break;
       default:

@@ -11,26 +11,26 @@ class GamePadAction {
 }
 
 class Gamepad extends StatelessWidget {
-  final GamePadAction onTapUp;
-  final GamePadAction onTapDown;
-  final GamePadAction onTapLeft;
-  final GamePadAction onTapRight;
+  final GamePadAction? onTapUp;
+  final GamePadAction? onTapDown;
+  final GamePadAction? onTapLeft;
+  final GamePadAction? onTapRight;
 
-  final GamePadAction onTapA;
-  final GamePadAction onTapB;
-  final GamePadAction onTapX;
-  final GamePadAction onTapY;
+  final GamePadAction? onTapA;
+  final GamePadAction? onTapB;
+  final GamePadAction? onTapX;
+  final GamePadAction? onTapY;
 
   const Gamepad({
     super.key,
-    required this.onTapUp,
-    required this.onTapDown,
-    required this.onTapLeft,
-    required this.onTapRight,
-    required this.onTapA,
-    required this.onTapB,
-    required this.onTapX,
-    required this.onTapY,
+    this.onTapUp,
+    this.onTapDown,
+    this.onTapLeft,
+    this.onTapRight,
+    this.onTapA,
+    this.onTapB,
+    this.onTapX,
+    this.onTapY,
   });
 
   @override
@@ -106,14 +106,14 @@ class Gamepad extends StatelessWidget {
 
   Widget _buildButton({
     required Widget child,
-    required GamePadAction onTap,
+    required GamePadAction? onTap,
   }) {
     return InkWell(
       onTapUp: (_) {
-        onTap.onUp();
+        onTap?.onUp();
       },
       onTapDown: (_) {
-        onTap.onDown();
+        onTap?.onDown();
       },
       child: CircleAvatar(
         radius: 20,

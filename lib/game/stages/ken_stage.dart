@@ -15,6 +15,13 @@ class KenStage extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // canvas.drawImageRect(
+    //   AssetsUtil.kenStageSpriteSheet,
+    //   const Rect.fromLTRB(0, 100, 770, 178),
+    //   Rect.fromLTRB(0, 0, size.width, 178),
+    //   Paint(),
+    // );
+
     if (player1 != null) {
       player1?.update(size, frameTime);
       player1?.draw(canvas);
