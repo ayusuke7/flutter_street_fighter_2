@@ -68,15 +68,6 @@ abstract class Fighter with KeyMap {
     // _debug(canvas);
   }
 
-  void _changeState(FighterState newState) {
-    if (newState == fighterState || !fighterState.validStates.contains(newState)) return;
-
-    fighterState = newState;
-    animationFrame = 0;
-
-    _initState();
-  }
-
   void _initState() {
     switch (fighterState) {
       case FighterState.IDLE:
@@ -105,30 +96,44 @@ abstract class Fighter with KeyMap {
     }
   }
 
+  void _changeState(FighterState newState) {
+    if (newState == fighterState || !fighterState.validStates.contains(newState)) return;
+
+    fighterState = newState;
+    animationFrame = 0;
+
+    _initState();
+  }
+
   void _updateState(FrameTime time) {
     switch (fighterState) {
       case FighterState.IDLE:
         if (keyRight) {
           _changeState(FighterState.WALK_FRONT);
-        } else if (keyLeft) {
+        }
+        if (keyLeft) {
           _changeState(FighterState.WALK_BACK);
-        } else if (keyUp) {
+        }
+        if (keyUp) {
           _changeState(FighterState.JUMP_UP);
-        } else if (keyDown) {
+        }
+        if (keyDown) {
           _changeState(FighterState.CROUCH_DOWN);
         }
         break;
       case FighterState.WALK_FRONT:
         if (!keyRight) {
           _changeState(FighterState.IDLE);
-        } else if (keyUp) {
+        }
+        if (keyUp) {
           _changeState(FighterState.JUMP_FRONT);
         }
         break;
       case FighterState.WALK_BACK:
         if (!keyLeft) {
           _changeState(FighterState.IDLE);
-        } else if (keyUp) {
+        }
+        if (keyUp) {
           _changeState(FighterState.JUMP_BACK);
         }
         break;

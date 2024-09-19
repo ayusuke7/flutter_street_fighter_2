@@ -66,69 +66,71 @@ class _GameStageState extends State<GameStage> {
           backgroundColor: const Color(0xFF3f3851),
         ),
         body: Center(
-          child: Column(
-            children: [
-              Focus(
-                autofocus: true,
-                onKeyEvent: keyListenner,
-                child: ColoredBox(
-                  color: Colors.black,
-                  child: CustomPaint(
-                    size: GameData.GAME_VIEWPORT,
-                    painter: KenStage(
-                      frameTime: frameTime,
-                      player1: ryu,
-                      player2: ken,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Focus(
+                  autofocus: true,
+                  onKeyEvent: keyListenner,
+                  child: ColoredBox(
+                    color: Colors.black,
+                    child: CustomPaint(
+                      size: GameData.GAME_VIEWPORT,
+                      painter: KenStage(
+                        frameTime: frameTime,
+                        player1: ryu,
+                        player2: ken,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width: 400.0,
-                child: Gamepad(
-                  onTapUp: GamePadAction(
-                    onUp: () {
-                      ryu.keyUp = false;
-                    },
-                    onDown: () {
-                      ryu.keyUp = true;
-                    },
+                SizedBox(
+                  width: 400.0,
+                  child: Gamepad(
+                    onTapUp: GamePadAction(
+                      onUp: () {
+                        ryu.keyUp = false;
+                      },
+                      onDown: () {
+                        ryu.keyUp = true;
+                      },
+                    ),
+                    onTapLeft: GamePadAction(
+                      onUp: () {
+                        ryu.keyLeft = false;
+                      },
+                      onDown: () {
+                        ryu.keyLeft = true;
+                      },
+                    ),
+                    onTapDown: GamePadAction(
+                      onUp: () {
+                        ryu.keyDown = false;
+                      },
+                      onDown: () {
+                        ryu.keyDown = true;
+                      },
+                    ),
+                    onTapRight: GamePadAction(
+                      onUp: () {
+                        ryu.keyRight = false;
+                      },
+                      onDown: () {
+                        ryu.keyRight = true;
+                      },
+                    ),
+                    onTapX: GamePadAction(
+                      onUp: () {
+                        ryu.keyX = false;
+                      },
+                      onDown: () {
+                        ryu.keyX = true;
+                      },
+                    ),
                   ),
-                  onTapLeft: GamePadAction(
-                    onUp: () {
-                      ryu.keyLeft = false;
-                    },
-                    onDown: () {
-                      ryu.keyLeft = true;
-                    },
-                  ),
-                  onTapDown: GamePadAction(
-                    onUp: () {
-                      ryu.keyDown = false;
-                    },
-                    onDown: () {
-                      ryu.keyDown = true;
-                    },
-                  ),
-                  onTapRight: GamePadAction(
-                    onUp: () {
-                      ryu.keyRight = false;
-                    },
-                    onDown: () {
-                      ryu.keyRight = true;
-                    },
-                  ),
-                  onTapX: GamePadAction(
-                    onUp: () {
-                      ryu.keyX = false;
-                    },
-                    onDown: () {
-                      ryu.keyX = true;
-                    },
-                  ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -140,13 +142,13 @@ class _GameStageState extends State<GameStage> {
       event.logicalKey,
     );
 
-    if (event.logicalKey == LogicalKeyboardKey.keyW) {
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
       ryu.keyUp = pressed;
-    } else if (event.logicalKey == LogicalKeyboardKey.keyA) {
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
       ryu.keyLeft = pressed;
-    } else if (event.logicalKey == LogicalKeyboardKey.keyD) {
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
       ryu.keyRight = pressed;
-    } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
       ryu.keyDown = pressed;
     }
 
