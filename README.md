@@ -1,16 +1,38 @@
-# platform_game
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-A new Flutter project.
+# Fighting Game (Street Fight 2)
 
-## Getting Started
+Remake Street Fighter 2 gamer with Flutter/Dart vanila
 
-This project is a starting point for a Flutter application.
+- No Engine
+- No Package
+- No TileMap
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshots
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![App Screenshot](./screens/capture.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Running
+
+Clone to project
+
+```bash
+
+  git clone https://github.com/ayusuke7/flutter_street_fighter_2
+
+  cd flutter_street_fighter_2
+
+  flutter pub get
+
+  flutter run
+
+```
+
+## Play
+
+Player 1 - ArrowUp, ArrowDown, ArrowLeft, ArroRight
+Player 2 - KeyA, KeyS, KeyD, KeyW
+
+## Autor
+
+- [@ayusuke7](https://github.com/ayusuke7)
