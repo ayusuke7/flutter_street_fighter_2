@@ -6,10 +6,10 @@ class Ken extends Fighter {
   Ken({
     required super.position,
     required super.direction,
+    super.name = "ken",
   }) : super(
           spriteSheetData: SpriteSheetData(
             spriteSheet: AssetsUtil.kenSpriteSheet,
-            animations: {},
           ),
         );
 }

@@ -7,18 +7,22 @@ import 'package:platform_game/game/types/sprite_sheet.dart';
 import 'package:platform_game/game/types/vector.dart';
 
 abstract class Fighter with KeyMap {
+  final String name;
+
   final SpriteSheetData spriteSheetData;
-  final Vector velocity = Vector(0, 0);
+  final Vector velocity = Vector.zero;
   final Vector position;
   final double gravity;
 
   FighterState fighterState;
   FighterDir direction;
+  Fighter? opponent;
 
   int animationFrame = 0;
   int animationTimer = 0;
 
   Fighter({
+    required this.name,
     required this.spriteSheetData,
     required this.position,
     required this.direction,
@@ -26,6 +30,7 @@ abstract class Fighter with KeyMap {
     this.gravity = FighterData.GRAVITY,
   }) {
     _initState();
+    flip = direction.flip;
   }
 
   List<Sprite> get currentAnimation {
@@ -56,8 +61,8 @@ abstract class Fighter with KeyMap {
         currentAnimationFrame.height,
       ),
       Rect.fromLTWH(
-        (position.x * direction.side).floor() - currentAnimationFrame.anchor.x,
-        position.y.floor() - currentAnimationFrame.anchor.y,
+        (position.x * direction.side).floor() - currentAnimationFrame.anchor!.x,
+        position.y.floor() - currentAnimationFrame.anchor!.y,
         currentAnimationFrame.width,
         currentAnimationFrame.height,
       ),
@@ -65,8 +70,10 @@ abstract class Fighter with KeyMap {
     );
     final matrix = Matrix4.identity();
     canvas.transform(matrix.storage);
-    // _debug(canvas);
+    _debug(canvas);
   }
+
+  /* Privates Methods */
 
   void _initState() {
     switch (fighterState) {
@@ -110,14 +117,11 @@ abstract class Fighter with KeyMap {
       case FighterState.IDLE:
         if (keyRight) {
           _changeState(FighterState.WALK_FRONT);
-        }
-        if (keyLeft) {
+        } else if (keyLeft) {
           _changeState(FighterState.WALK_BACK);
-        }
-        if (keyUp) {
+        } else if (keyUp) {
           _changeState(FighterState.JUMP_UP);
-        }
-        if (keyDown) {
+        } else if (keyDown) {
           _changeState(FighterState.CROUCH_DOWN);
         }
         break;
@@ -189,20 +193,41 @@ abstract class Fighter with KeyMap {
   }
 
   void _debug(Canvas canvas) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
+    // HitBox
+    if (currentAnimationFrame.hitBox != null) {
+      final paintHitBox = Paint()
+        ..color = Colors.green.withOpacity(.5)
+        ..style = PaintingStyle.fill;
 
-    canvas.drawLine(
-      Offset(position.x.floorToDouble() - 4.5, position.y.floorToDouble()),
-      Offset(position.x.floorToDouble() + 4.5, position.y.floorToDouble()),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(position.x.floorToDouble(), position.y.floorToDouble() - 4.5),
-      Offset(position.x.floorToDouble(), position.y.floorToDouble() + 4.5),
-      paint,
-    );
+      canvas.drawRect(
+        Rect.fromLTWH(
+          (position.x * direction.side) + currentAnimationFrame.hitBox!.x,
+          position.y + currentAnimationFrame.hitBox!.y,
+          currentAnimationFrame.hitBox!.width,
+          currentAnimationFrame.hitBox!.height,
+        ),
+        paintHitBox,
+      );
+    }
+
+    // Anchor Origin
+    if (currentAnimationFrame.anchor != null) {
+      final paintAnchor = Paint()
+        ..color = Colors.white
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+
+      final sideX = position.x.floorToDouble() * direction.side;
+      canvas.drawLine(
+        Offset(sideX - 4.5, position.y.floorToDouble()),
+        Offset(sideX + 4.5, position.y.floorToDouble()),
+        paintAnchor,
+      );
+      canvas.drawLine(
+        Offset(sideX, position.y.floorToDouble() - 4.5),
+        Offset(sideX, position.y.floorToDouble() + 4.5),
+        paintAnchor,
+      );
+    }
   }
 }

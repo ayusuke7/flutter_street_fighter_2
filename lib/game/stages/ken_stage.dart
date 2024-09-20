@@ -1,40 +1,51 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:platform_game/game/figthers/fighter.dart';
+import 'package:platform_game/game/stages/stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
+import 'package:platform_game/game/types/sprite_sheet.dart';
+import 'package:platform_game/game/utils/assets.dart';
 
-class KenStage extends CustomPainter {
-  final FrameTime frameTime;
-  final Fighter? player1;
-  final Fighter? player2;
-
-  KenStage({
-    required this.frameTime,
-    this.player1,
-    this.player2,
-  });
+class KenStage extends Stage {
+  KenStage()
+      : super(
+          spriteSheetData: SpriteSheetData(
+            spriteSheet: AssetsUtil.kenStageSpriteSheet,
+            animations: {
+              "bg": [const Sprite(72, 208, 768, 176)],
+              "boat": [const Sprite(8, 16, 522, 180)],
+              "floor": [const Sprite(8, 392, 896, 72)],
+            },
+          ),
+        );
 
   @override
-  void paint(Canvas canvas, Size size) {
-    // canvas.drawImageRect(
-    //   AssetsUtil.kenStageSpriteSheet,
-    //   const Rect.fromLTRB(0, 100, 770, 178),
-    //   Rect.fromLTRB(0, 0, size.width, 178),
-    //   Paint(),
-    // );
+  void draw(Canvas canvas, Size size) {
+    final bg = spriteSheetData.animations['bg']!.first;
+    canvas.drawImageRect(
+      spriteSheetData.spriteSheet,
+      bg.toRect(),
+      bg.toDest(-190, -16),
+      Paint(),
+    );
 
-    if (player1 != null) {
-      player1?.update(size, frameTime);
-      player1?.draw(canvas);
-    }
+    final boat = spriteSheetData.animations['boat']!.first;
+    canvas.drawImageRect(
+      spriteSheetData.spriteSheet,
+      boat.toRect(),
+      boat.toDest(-128, -16),
+      Paint(),
+    );
 
-    if (player2 != null) {
-      player2?.update(size, frameTime);
-      player2?.draw(canvas);
-    }
+    final floor = spriteSheetData.animations['floor']!.first;
+    canvas.drawImageRect(
+      spriteSheetData.spriteSheet,
+      floor.toRect(),
+      floor.toDest(-256, 168),
+      Paint(),
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  void update(Size size, FrameTime time) {}
 }

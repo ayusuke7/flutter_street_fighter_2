@@ -3,10 +3,13 @@ enum FighterDir {
   RIGTH;
 
   int get side => this == RIGTH ? 1 : -1;
+
+  bool get flip => this == LEFT ? true : false;
 }
 
 enum FighterState {
   IDLE,
+  IDLE_TURN,
   WALK_BACK,
   WALK_FRONT,
   JUMP_UP,
@@ -14,7 +17,8 @@ enum FighterState {
   JUMP_BACK,
   CROUCH,
   CROUCH_UP,
-  CROUCH_DOWN;
+  CROUCH_DOWN,
+  CROUCH_TURN;
 
   List<FighterState> get validStates {
     switch (this) {
@@ -30,6 +34,8 @@ enum FighterState {
           CROUCH_UP,
           CROUCH_DOWN,
         ];
+      case IDLE_TURN:
+        return [IDLE, WALK_BACK, WALK_FRONT];
       case WALK_FRONT:
         return [IDLE, WALK_BACK];
       case WALK_BACK:

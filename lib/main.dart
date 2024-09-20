@@ -5,5 +5,5 @@ import 'package:platform_game/game/utils/assets.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AssetsUtil.loadImages();
-  runApp(const GameStage());
+  runApp(const Game());
 }

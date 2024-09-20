@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 abstract class GameData {
-  static const GAME_VIEWPORT = Size(720.0, 480.0);
-
-  static get STAGE_FLOOR => GAME_VIEWPORT.height - 80.0;
+  static const GAME_VIEWPORT = Size(384.0, 240.0);
+  static const STAGE_FLOOR = 200.0;
 }
