@@ -42,6 +42,15 @@ class Ryu extends Fighter {
                 Sprite(631, 125, 58, 91, anchor: Vector(36, 88), delay: 65, hitBox: IDLE_HITBOX),
                 Sprite(707, 126, 57, 89, anchor: Vector(36, 87), delay: 65, hitBox: IDLE_HITBOX),
               ],
+              FighterState.JUMP_START.name: [
+                Sprite(7, 268, 55, 85, anchor: Vector(29, 83), delay: 50, hitBox: JUMP_HITBOX),
+                Sprite(7, 268, 55, 85, anchor: Vector(29, 83), delay: -2, hitBox: JUMP_HITBOX),
+              ],
+              FighterState.JUMP_LAND.name: [
+                Sprite(7, 268, 55, 85, anchor: Vector(29, 83), delay: 33, hitBox: JUMP_HITBOX),
+                Sprite(7, 268, 55, 85, anchor: Vector(29, 83), delay: 117, hitBox: JUMP_HITBOX),
+                Sprite(7, 268, 55, 85, anchor: Vector(29, 83), delay: -2, hitBox: JUMP_HITBOX),
+              ],
               FighterState.JUMP_UP.name: [
                 Sprite(67, 244, 56, 104, anchor: Vector(32, 107), delay: 180, hitBox: JUMP_HITBOX),
                 Sprite(138, 233, 50, 89, anchor: Vector(25, 103), delay: 100, hitBox: JUMP_HITBOX),
@@ -69,7 +78,7 @@ class Ryu extends Fighter {
                 // Sprite(878, 121, 55, 103, anchor: Vector(25, 106), delay: 0),
               ],
               FighterState.CROUCH.name: [
-                Sprite(679, 44, 61, 61, anchor: Vector(25, 58), delay: 50, hitBox: JUMP_HITBOX),
+                Sprite(679, 44, 61, 61, anchor: Vector(25, 58), delay: 0, hitBox: JUMP_HITBOX),
               ],
               FighterState.CROUCH_UP.name: [
                 Sprite(679, 44, 61, 61, anchor: Vector(25, 58), delay: 30, hitBox: CROUNCH_HITBOX),

@@ -1,9 +1,8 @@
 mixin KeyMap {
   bool flip = false;
 
-  bool keyUp = false;
-  bool keyDown = false;
-
+  bool _keyUp = false;
+  bool _keyDown = false;
   bool _keyLeft = false;
   bool _keyRight = false;
 
@@ -12,9 +11,13 @@ mixin KeyMap {
   bool keyX = false;
   bool keyY = false;
 
-  bool get keyLeft => _keyLeft;
+  set keyUp(bool pressed) {
+    _keyUp = pressed;
+  }
 
-  bool get keyRight => _keyRight;
+  set keyDown(bool pressed) {
+    _keyDown = pressed;
+  }
 
   set keyLeft(bool pressed) {
     if (flip) {
@@ -31,4 +34,14 @@ mixin KeyMap {
       _keyRight = pressed;
     }
   }
+
+  bool get isUp => _keyUp;
+
+  bool get isDown => _keyDown;
+
+  bool get isBackward => _keyLeft;
+
+  bool get isForward => _keyRight;
+
+  bool get isIdle => !(_keyLeft || _keyRight || _keyUp || _keyDown);
 }

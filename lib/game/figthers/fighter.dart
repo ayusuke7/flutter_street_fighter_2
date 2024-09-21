@@ -6,6 +6,13 @@ import 'package:platform_game/game/types/key_map.dart';
 import 'package:platform_game/game/types/sprite_sheet.dart';
 import 'package:platform_game/game/types/vector.dart';
 
+const initialVelocitys = {
+  FighterState.WALK_FRONT: FighterData.WALK_FRONT,
+  FighterState.WALK_BACK: -FighterData.WALK_FRONT,
+  FighterState.JUMP_FRONT: FighterData.JUMP_FRONT,
+  FighterState.JUMP_BACK: -FighterData.JUMP_BACK,
+};
+
 abstract class Fighter with KeyMap {
   final String name;
 
@@ -75,36 +82,8 @@ abstract class Fighter with KeyMap {
 
   /* Privates Methods */
 
-  void _initState() {
-    switch (fighterState) {
-      case FighterState.IDLE:
-        velocity.x = 0;
-        velocity.y = 0;
-        break;
-      case FighterState.WALK_FRONT:
-        velocity.x = FighterData.WALK_FRONT;
-        break;
-      case FighterState.WALK_BACK:
-        velocity.x = -FighterData.WALK_BACK;
-        break;
-      case FighterState.JUMP_UP:
-        velocity.y = -FighterData.JUMP_UP;
-        break;
-      case FighterState.JUMP_FRONT:
-        velocity.y = -FighterData.JUMP_UP;
-        velocity.x = FighterData.JUMP_FRONT;
-        break;
-      case FighterState.JUMP_BACK:
-        velocity.y = -FighterData.JUMP_UP;
-        velocity.x = -FighterData.JUMP_BACK;
-        break;
-      default:
-        break;
-    }
-  }
-
   void _changeState(FighterState newState) {
-    if (newState == fighterState || !fighterState.validStates.contains(newState)) return;
+    if (newState == fighterState || !newState.validStates.contains(fighterState)) return;
 
     fighterState = newState;
     animationFrame = 0;
@@ -112,52 +91,58 @@ abstract class Fighter with KeyMap {
     _initState();
   }
 
-  void _updateState(FrameTime time) {
+  void _initState() {
     switch (fighterState) {
       case FighterState.IDLE:
-        if (keyRight) {
-          _changeState(FighterState.WALK_FRONT);
-        } else if (keyLeft) {
-          _changeState(FighterState.WALK_BACK);
-        } else if (keyUp) {
-          _changeState(FighterState.JUMP_UP);
-        } else if (keyDown) {
-          _changeState(FighterState.CROUCH_DOWN);
-        }
+      case FighterState.JUMP_START:
+      case FighterState.JUMP_LAND:
+      case FighterState.CROUCH_DOWN:
+        _handleIdleInit();
         break;
       case FighterState.WALK_FRONT:
-        if (!keyRight) {
-          _changeState(FighterState.IDLE);
-        }
-        if (keyUp) {
-          _changeState(FighterState.JUMP_FRONT);
-        }
-        break;
       case FighterState.WALK_BACK:
-        if (!keyLeft) {
-          _changeState(FighterState.IDLE);
-        }
-        if (keyUp) {
-          _changeState(FighterState.JUMP_BACK);
-        }
+        _handleMoveInit();
         break;
       case FighterState.JUMP_UP:
       case FighterState.JUMP_FRONT:
       case FighterState.JUMP_BACK:
-        velocity.y += gravity * time.secondsPassed;
-        if (position.y > GameData.STAGE_FLOOR) {
-          position.y = GameData.STAGE_FLOOR;
-          _changeState(FighterState.IDLE);
-        }
+        _handleJumpInit();
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _updateState(FrameTime time) {
+    switch (fighterState) {
+      case FighterState.IDLE:
+        _handleIdleState();
+        break;
+      case FighterState.WALK_FRONT:
+        _handleWalkFrontState();
+        break;
+      case FighterState.WALK_BACK:
+        _handleWalkBackState();
+        break;
+      case FighterState.JUMP_UP:
+      case FighterState.JUMP_FRONT:
+      case FighterState.JUMP_BACK:
+        _handleJumpState(time);
+        break;
+      case FighterState.JUMP_START:
+        _handleJumpStartState();
+        break;
+      case FighterState.JUMP_LAND:
+        _handleJumpLandState();
+        break;
+      case FighterState.CROUCH:
+        _handleCrouchState();
         break;
       case FighterState.CROUCH_UP:
+        _handleCrouchUpState();
+        break;
       case FighterState.CROUCH_DOWN:
-        if (currentAnimationFrame.delay == -2) {
-          _changeState(FighterState.CROUCH);
-        }
-        if (!keyDown) {
-          _changeState(FighterState.IDLE);
-        }
+        _handleCrouchDownState();
         break;
       default:
         break;
@@ -191,6 +176,113 @@ abstract class Fighter with KeyMap {
       position.x = width;
     }
   }
+
+  /* Handle Init States */
+
+  void _handleIdleInit() {
+    velocity.x = 0;
+    velocity.y = 0;
+  }
+
+  void _handleMoveInit() {
+    velocity.x = initialVelocitys[fighterState] ?? 0;
+  }
+
+  void _handleJumpInit() {
+    velocity.y = -FighterData.JUMP_UP;
+    _handleMoveInit();
+  }
+
+  /* Handle Update States */
+
+  void _handleIdleState() {
+    if (isUp) {
+      _changeState(FighterState.JUMP_START);
+    }
+    if (isDown) {
+      _changeState(FighterState.CROUCH_DOWN);
+    }
+    if (isForward) {
+      _changeState(FighterState.WALK_FRONT);
+    }
+    if (isBackward) {
+      _changeState(FighterState.WALK_BACK);
+    }
+  }
+
+  void _handleWalkFrontState() {
+    if (!isForward) {
+      _changeState(FighterState.IDLE);
+    }
+    if (isUp) {
+      _changeState(FighterState.JUMP_START);
+    }
+    if (isDown) {
+      _changeState(FighterState.CROUCH_DOWN);
+    }
+  }
+
+  void _handleWalkBackState() {
+    if (!isBackward) {
+      _changeState(FighterState.IDLE);
+    }
+    if (isUp) {
+      _changeState(FighterState.JUMP_START);
+    }
+    if (isDown) {
+      _changeState(FighterState.CROUCH_DOWN);
+    }
+  }
+
+  void _handleJumpState(FrameTime time) {
+    velocity.y += gravity * time.secondsPassed;
+    if (position.y > GameData.STAGE_FLOOR) {
+      position.y = GameData.STAGE_FLOOR;
+      _changeState(FighterState.JUMP_LAND);
+    }
+  }
+
+  void _handleJumpStartState() {
+    if (currentAnimationFrame.delay == -2) {
+      if (isBackward) {
+        _changeState(FighterState.JUMP_BACK);
+      } else if (isForward) {
+        _changeState(FighterState.JUMP_FRONT);
+      } else {
+        _changeState(FighterState.JUMP_UP);
+      }
+    }
+  }
+
+  void _handleJumpLandState() {
+    if (animationFrame < 1) return;
+
+    if (!isIdle) {
+      _handleIdleState();
+    } else if (currentAnimationFrame.delay != -2) {
+      _changeState(FighterState.IDLE);
+    }
+  }
+
+  void _handleCrouchState() {
+    if (!isDown) {
+      _changeState(FighterState.CROUCH_UP);
+    }
+  }
+
+  void _handleCrouchDownState() {
+    if (currentAnimationFrame.delay == -2) {
+      _changeState(FighterState.CROUCH);
+    }
+  }
+
+  void _handleCrouchUpState() {
+    if (currentAnimationFrame.delay == -2) {
+      _changeState(FighterState.IDLE);
+    }
+  }
+
+  /* Debug */
 
   void _debug(Canvas canvas) {
     // HitBox

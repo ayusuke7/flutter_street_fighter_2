@@ -13,8 +13,10 @@ enum FighterState {
   WALK_BACK,
   WALK_FRONT,
   JUMP_UP,
+  JUMP_START,
   JUMP_FRONT,
   JUMP_BACK,
+  JUMP_LAND,
   CROUCH,
   CROUCH_UP,
   CROUCH_DOWN,
@@ -30,9 +32,8 @@ enum FighterState {
           JUMP_UP,
           JUMP_FRONT,
           JUMP_BACK,
-          CROUCH,
+          JUMP_LAND,
           CROUCH_UP,
-          CROUCH_DOWN,
         ];
       case IDLE_TURN:
         return [IDLE, WALK_BACK, WALK_FRONT];
@@ -40,12 +41,16 @@ enum FighterState {
         return [IDLE, WALK_BACK];
       case WALK_BACK:
         return [IDLE, WALK_FRONT];
+      case JUMP_START:
+        return [IDLE, WALK_FRONT, WALK_BACK, JUMP_LAND];
       case JUMP_UP:
-        return [IDLE];
+        return [JUMP_START];
       case JUMP_FRONT:
-        return [IDLE];
+        return [JUMP_START];
       case JUMP_BACK:
-        return [IDLE];
+        return [JUMP_START];
+      case JUMP_LAND:
+        return [JUMP_UP, JUMP_FRONT, JUMP_BACK];
       case CROUCH:
         return [CROUCH_DOWN];
       case CROUCH_UP:
