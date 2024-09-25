@@ -1,25 +1,18 @@
 mixin KeyMap {
-  bool flip = false;
-
   bool _keyUp = false;
   bool _keyDown = false;
   bool _keyLeft = false;
   bool _keyRight = false;
 
-  bool keyA = false;
-  bool keyB = false;
-  bool keyX = false;
-  bool keyY = false;
-
-  set keyUp(bool pressed) {
+  void arrowUp(bool pressed) {
     _keyUp = pressed;
   }
 
-  set keyDown(bool pressed) {
+  void arrowDown(bool pressed) {
     _keyDown = pressed;
   }
 
-  set keyLeft(bool pressed) {
+  void arrowLeft(bool pressed, bool flip) {
     if (flip) {
       _keyRight = pressed;
     } else {
@@ -27,7 +20,7 @@ mixin KeyMap {
     }
   }
 
-  set keyRight(bool pressed) {
+  void arrowRight(bool pressed, bool flip) {
     if (flip) {
       _keyLeft = pressed;
     } else {

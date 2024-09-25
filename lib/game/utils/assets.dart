@@ -4,12 +4,10 @@ import 'package:flutter/services.dart';
 
 abstract class AssetsUtil {
   static late ui.Image ryuSpriteSheet;
-  static late ui.Image kenSpriteSheet;
   static late ui.Image kenStageSpriteSheet;
 
   static Future<void> loadImages() async {
     ryuSpriteSheet = await _loadImage('assets/images/ryu.png');
-    kenSpriteSheet = await _loadImage('assets/images/ken.png');
     kenStageSpriteSheet = await _loadImage('assets/images/ken-stage.png');
   }
 

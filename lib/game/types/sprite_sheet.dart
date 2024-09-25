@@ -18,19 +18,20 @@ class Sprite {
 
   final double width;
   final double height;
-  final double delay;
 
   final HitBox? hitBox;
   final Vector? anchor;
 
-  const Sprite(
+  double delay;
+
+  Sprite(
     this.x,
     this.y,
     this.width,
     this.height, {
-    this.delay = 0,
     this.hitBox,
     this.anchor,
+    this.delay = 0,
   });
 
   ui.Rect toRect() => ui.Rect.fromLTWH(x, y, width, height);

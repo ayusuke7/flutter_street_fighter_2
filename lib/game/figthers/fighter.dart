@@ -8,8 +8,8 @@ import 'package:platform_game/game/types/vector.dart';
 
 const initialVelocitys = {
   FighterState.WALK_FRONT: FighterData.WALK_FRONT,
-  FighterState.WALK_BACK: -FighterData.WALK_FRONT,
   FighterState.JUMP_FRONT: FighterData.JUMP_FRONT,
+  FighterState.WALK_BACK: -FighterData.WALK_FRONT,
   FighterState.JUMP_BACK: -FighterData.JUMP_BACK,
 };
 
@@ -17,27 +17,26 @@ abstract class Fighter with KeyMap {
   final String name;
 
   final SpriteSheetData spriteSheetData;
-  final Vector velocity = Vector.zero;
+  final Vector velocity = Vector(0, 0);
   final Vector position;
   final double gravity;
 
   FighterState fighterState;
   FighterDir direction;
-  Fighter? opponent;
+  Fighter? oponnent;
 
   int animationFrame = 0;
   int animationTimer = 0;
 
   Fighter({
     required this.name,
-    required this.spriteSheetData,
     required this.position,
     required this.direction,
-    this.fighterState = FighterState.IDLE,
+    required this.spriteSheetData,
     this.gravity = FighterData.GRAVITY,
+    this.fighterState = FighterState.IDLE,
   }) {
     _initState();
-    flip = direction.flip;
   }
 
   List<Sprite> get currentAnimation {
@@ -48,9 +47,25 @@ abstract class Fighter with KeyMap {
     return currentAnimation[animationFrame];
   }
 
+  FighterDir get currentDirection {
+    if (oponnent != null && position.x >= oponnent!.position.x) {
+      return FighterDir.LEFT;
+    }
+
+    return FighterDir.RIGTH;
+  }
+
   void update(Size size, FrameTime time) {
     position.x += (velocity.x * direction.side) * time.secondsPassed;
     position.y += velocity.y * time.secondsPassed;
+
+    if ([
+      FighterState.IDLE,
+      FighterState.WALK_FRONT,
+      FighterState.WALK_BACK,
+    ].contains(fighterState)) {
+      direction = currentDirection;
+    }
 
     _updateState(time);
     _updateAnimation(time);
@@ -75,15 +90,17 @@ abstract class Fighter with KeyMap {
       ),
       Paint(),
     );
-    final matrix = Matrix4.identity();
-    canvas.transform(matrix.storage);
+    canvas.transform(Matrix4.identity().storage);
+
     _debug(canvas);
   }
 
   /* Privates Methods */
 
   void _changeState(FighterState newState) {
-    if (newState == fighterState || !newState.validStates.contains(fighterState)) return;
+    if (newState == fighterState || !newState.validStates.contains(fighterState)) {
+      return;
+    }
 
     fighterState = newState;
     animationFrame = 0;
@@ -260,8 +277,10 @@ abstract class Fighter with KeyMap {
     if (!isIdle) {
       _handleIdleState();
     } else if (currentAnimationFrame.delay != -2) {
-      _changeState(FighterState.IDLE);
+      return;
     }
+
+    _changeState(FighterState.IDLE);
   }
 
   void _handleCrouchState() {

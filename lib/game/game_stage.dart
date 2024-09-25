@@ -4,14 +4,14 @@ import 'package:platform_game/game/stages/stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
 
 class GameStage extends CustomPainter {
-  final FrameTime frameTime;
+  final FrameTime time;
   final Stage stage;
 
   final Fighter? player1;
   final Fighter? player2;
 
   GameStage({
-    required this.frameTime,
+    required this.time,
     required this.stage,
     this.player1,
     this.player2,
@@ -19,19 +19,16 @@ class GameStage extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    stage.update(size, frameTime);
+    stage.update(size, time);
     stage.draw(canvas, size);
 
-    player2?.opponent = player1;
-    player1?.opponent = player2;
-
     if (player1 != null) {
-      player1?.update(size, frameTime);
+      player1?.update(size, time);
       player1?.draw(canvas);
     }
 
     if (player2 != null) {
-      player2?.update(size, frameTime);
+      player2?.update(size, time);
       player2?.draw(canvas);
     }
   }
