@@ -3,7 +3,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
-import 'package:platform_game/game/figthers/ken.dart';
 import 'package:platform_game/game/figthers/ryu.dart';
 import 'package:platform_game/game/game_stage.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
@@ -25,7 +24,8 @@ class _GameStageState extends State<Game> {
     position: Vector(50, GameData.STAGE_FLOOR),
     direction: FighterDir.RIGTH,
   );
-  final ken = Ken(
+  final ken = Ryu(
+    name: "ken",
     position: Vector(330, GameData.STAGE_FLOOR),
     direction: FighterDir.LEFT,
   );

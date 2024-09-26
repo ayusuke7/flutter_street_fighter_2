@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
@@ -5,6 +7,7 @@ import 'package:platform_game/game/types/frame_time.dart';
 import 'package:platform_game/game/types/key_map.dart';
 import 'package:platform_game/game/types/sprite_sheet.dart';
 import 'package:platform_game/game/types/vector.dart';
+import 'package:platform_game/game/utils/collisions.dart';
 
 const initialVelocitys = {
   FighterState.WALK_FRONT: FighterData.WALK_FRONT,
@@ -51,10 +54,19 @@ abstract class Fighter with KeyMap {
     return currentAnimationFrame.hitBox ?? HitBox(0, 0, 0, 0);
   }
 
-  HitBox get oponnetHitbox {
-    final hitbox = HitBox(0, 0, 0, 0);
-    if (oponnent == null) return hitbox;
-    return oponnent!.currentAnimationFrame.hitBox ?? hitbox;
+  bool get hasCollideOponnent {
+    if (oponnent == null) return false;
+
+    return Collisions.rectsOverlaps(
+      position.x + currentHitbox.x,
+      position.y + currentHitbox.y,
+      currentHitbox.width,
+      currentHitbox.height,
+      oponnent!.position.x + oponnent!.currentHitbox.x,
+      oponnent!.position.y + oponnent!.currentHitbox.y,
+      oponnent!.currentHitbox.width,
+      oponnent!.currentHitbox.height,
+    );
   }
 
   void update(Size size, FrameTime time) {
@@ -97,18 +109,6 @@ abstract class Fighter with KeyMap {
   }
 
   /* Privates Methods */
-
-  void _changeDirection() {
-    if (oponnent == null) return;
-
-    if (position.x + currentHitbox.x + currentHitbox.width <=
-        oponnent!.position.x + oponnent!.currentHitbox.x) {
-      direction = FighterDir.RIGTH;
-    } else if (position.x + currentHitbox.x >=
-        oponnent!.position.x + oponnent!.currentHitbox.x + oponnent!.currentHitbox.width) {
-      direction = FighterDir.LEFT;
-    }
-  }
 
   void _changeState(FighterState newState) {
     if (newState == fighterState || !newState.validStates.contains(fighterState)) {
@@ -204,6 +204,36 @@ abstract class Fighter with KeyMap {
 
     if (position.x < width) {
       position.x = width;
+    }
+
+    if (hasCollideOponnent) {
+      if (position.x <= oponnent!.position.x) {
+        position.x = max(
+          (oponnent!.position.x + oponnent!.currentHitbox.x) -
+              (currentHitbox.x + currentHitbox.width),
+          currentHitbox.width,
+        );
+      }
+
+      if (position.x >= oponnent!.position.x) {
+        position.x = min(
+          (oponnent!.position.x + oponnent!.currentHitbox.x + oponnent!.currentHitbox.width) +
+              (currentHitbox.width + currentHitbox.x),
+          size.width - currentAnimationFrame.width,
+        );
+      }
+    }
+  }
+
+  void _changeDirection() {
+    if (oponnent == null) return;
+
+    if (position.x + currentHitbox.x + currentHitbox.width <=
+        oponnent!.position.x + oponnent!.currentHitbox.x) {
+      direction = FighterDir.RIGTH;
+    } else if (position.x + currentHitbox.x >=
+        oponnent!.position.x + oponnent!.currentHitbox.x + oponnent!.currentHitbox.width) {
+      direction = FighterDir.LEFT;
     }
   }
 
