@@ -8,8 +8,8 @@ import 'package:platform_game/game/types/vector.dart';
 
 const initialVelocitys = {
   FighterState.WALK_FRONT: FighterData.WALK_FRONT,
+  FighterState.WALK_BACK: -FighterData.WALK_BACK,
   FighterState.JUMP_FRONT: FighterData.JUMP_FRONT,
-  FighterState.WALK_BACK: -FighterData.WALK_FRONT,
   FighterState.JUMP_BACK: -FighterData.JUMP_BACK,
 };
 
@@ -47,32 +47,32 @@ abstract class Fighter with KeyMap {
     return currentAnimation[animationFrame];
   }
 
-  FighterDir get currentDirection {
-    if (oponnent != null && position.x >= oponnent!.position.x) {
-      return FighterDir.LEFT;
-    }
+  HitBox get currentHitbox {
+    return currentAnimationFrame.hitBox ?? HitBox(0, 0, 0, 0);
+  }
 
-    return FighterDir.RIGTH;
+  HitBox get oponnetHitbox {
+    final hitbox = HitBox(0, 0, 0, 0);
+    if (oponnent == null) return hitbox;
+    return oponnent!.currentAnimationFrame.hitBox ?? hitbox;
   }
 
   void update(Size size, FrameTime time) {
     position.x += (velocity.x * direction.side) * time.secondsPassed;
     position.y += velocity.y * time.secondsPassed;
 
-    if ([
-      FighterState.IDLE,
-      FighterState.WALK_FRONT,
-      FighterState.WALK_BACK,
-    ].contains(fighterState)) {
-      direction = currentDirection;
-    }
+    _changeDirection();
 
     _updateState(time);
     _updateAnimation(time);
     _updateStageContraints(size);
   }
 
-  void draw(Canvas canvas) {
+  void draw(Canvas canvas, Paint paint) {
+    final originX = currentAnimationFrame.anchor!.x;
+    final originY = currentAnimationFrame.anchor!.y;
+
+    canvas.save();
     canvas.scale(direction.side.toDouble(), 1);
     canvas.drawImageRect(
       spriteSheetData.spriteSheet,
@@ -83,19 +83,32 @@ abstract class Fighter with KeyMap {
         currentAnimationFrame.height,
       ),
       Rect.fromLTWH(
-        (position.x * direction.side).floor() - currentAnimationFrame.anchor!.x,
-        position.y.floor() - currentAnimationFrame.anchor!.y,
+        (position.x * direction.side).floorToDouble() - originX,
+        position.y.floorToDouble() - originY,
         currentAnimationFrame.width,
         currentAnimationFrame.height,
       ),
-      Paint(),
+      paint,
     );
     canvas.transform(Matrix4.identity().storage);
+    canvas.restore();
 
     _debug(canvas);
   }
 
   /* Privates Methods */
+
+  void _changeDirection() {
+    if (oponnent == null) return;
+
+    if (position.x + currentHitbox.x + currentHitbox.width <=
+        oponnent!.position.x + oponnent!.currentHitbox.x) {
+      direction = FighterDir.RIGTH;
+    } else if (position.x + currentHitbox.x >=
+        oponnent!.position.x + oponnent!.currentHitbox.x + oponnent!.currentHitbox.width) {
+      direction = FighterDir.LEFT;
+    }
+  }
 
   void _changeState(FighterState newState) {
     if (newState == fighterState || !newState.validStates.contains(fighterState)) {
@@ -183,7 +196,7 @@ abstract class Fighter with KeyMap {
   }
 
   void _updateStageContraints(Size size) {
-    const width = 32.0;
+    var width = currentAnimationFrame.hitBox!.width;
 
     if (position.x > size.width - width) {
       position.x = size.width - width;
@@ -312,7 +325,7 @@ abstract class Fighter with KeyMap {
 
       canvas.drawRect(
         Rect.fromLTWH(
-          (position.x * direction.side) + currentAnimationFrame.hitBox!.x,
+          position.x + currentAnimationFrame.hitBox!.x,
           position.y + currentAnimationFrame.hitBox!.y,
           currentAnimationFrame.hitBox!.width,
           currentAnimationFrame.hitBox!.height,
@@ -328,7 +341,7 @@ abstract class Fighter with KeyMap {
         ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke;
 
-      final sideX = position.x.floorToDouble() * direction.side;
+      final sideX = position.x.floorToDouble();
       canvas.drawLine(
         Offset(sideX - 4.5, position.y.floorToDouble()),
         Offset(sideX + 4.5, position.y.floorToDouble()),

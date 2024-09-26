@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
+import 'package:platform_game/game/figthers/ken.dart';
 import 'package:platform_game/game/figthers/ryu.dart';
 import 'package:platform_game/game/game_stage.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
@@ -21,12 +22,10 @@ class _GameStageState extends State<Game> {
   final stage = KenStage();
 
   final ryu = Ryu(
-    name: "ryu",
     position: Vector(50, GameData.STAGE_FLOOR),
     direction: FighterDir.RIGTH,
   );
-  final ken = Ryu(
-    name: "ken",
+  final ken = Ken(
     position: Vector(330, GameData.STAGE_FLOOR),
     direction: FighterDir.LEFT,
   );
@@ -59,6 +58,7 @@ class _GameStageState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
+    print("RYU: ${ryu.direction} / KEN: ${ken.direction}");
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color(0xFF3f3851),
