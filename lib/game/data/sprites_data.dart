@@ -11,7 +11,14 @@ enum SpriteKey {
   CROUCH,
   KEN_BG,
   KEN_BOAT,
-  KEN_FLOOR
+  KEN_FLOOR,
+  HEALTH_BAR,
+  KO_WHITE,
+  TIME,
+  SCORE_NUMBER,
+  SCORE_LETTER,
+  TAG_KEN,
+  TAG_RYU,
 }
 
 abstract class SpritesData {
@@ -77,6 +84,43 @@ abstract class SpritesData {
       SpriteKey.KEN_BG: [Sprite(72, 208, 768, 176)],
       SpriteKey.KEN_BOAT: [Sprite(8, 16, 522, 180)],
       SpriteKey.KEN_FLOOR: [Sprite(8, 392, 896, 72)],
+    }[key]!;
+  }
+
+  static List<Sprite> hudStage(SpriteKey key) {
+    return {
+      SpriteKey.HEALTH_BAR: [Sprite(16, 18, 145, 11)],
+      SpriteKey.KO_WHITE: [Sprite(161, 16, 32, 14)],
+      SpriteKey.TAG_KEN: [Sprite(128, 56, 30, 9)],
+      SpriteKey.TAG_RYU: [Sprite(16, 56, 28, 9)],
+      SpriteKey.TIME: [
+        Sprite(16, 32, 14, 16),
+        Sprite(32, 32, 14, 16),
+        Sprite(48, 32, 14, 16),
+        Sprite(64, 32, 14, 16),
+        Sprite(80, 32, 14, 16),
+        Sprite(96, 32, 14, 16),
+        Sprite(112, 32, 14, 16),
+        Sprite(128, 32, 14, 16),
+        Sprite(144, 32, 14, 16),
+        Sprite(160, 32, 14, 16),
+      ],
+      SpriteKey.SCORE_NUMBER: [
+        Sprite(17, 101, 10, 10),
+        Sprite(29, 101, 10, 10),
+        Sprite(41, 101, 10, 10),
+        Sprite(53, 101, 10, 10),
+        Sprite(65, 101, 10, 10),
+        Sprite(77, 101, 10, 10),
+        Sprite(89, 101, 10, 10),
+        Sprite(101, 101, 10, 10),
+        Sprite(113, 101, 10, 10),
+        Sprite(125, 101, 10, 10),
+      ],
+      SpriteKey.SCORE_LETTER: [
+        //Letter P
+        Sprite(17, 125, 10, 10),
+      ],
     }[key]!;
   }
 }

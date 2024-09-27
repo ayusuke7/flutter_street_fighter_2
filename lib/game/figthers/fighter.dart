@@ -9,18 +9,11 @@ import 'package:platform_game/game/types/sprite_sheet.dart';
 import 'package:platform_game/game/types/vector.dart';
 import 'package:platform_game/game/utils/collisions.dart';
 
-const initialVelocitys = {
-  FighterState.WALK_FRONT: FighterData.WALK_FRONT,
-  FighterState.WALK_BACK: -FighterData.WALK_BACK,
-  FighterState.JUMP_FRONT: FighterData.JUMP_FRONT,
-  FighterState.JUMP_BACK: -FighterData.JUMP_BACK,
-};
-
 abstract class Fighter with KeyMap {
-  final String name;
-
   final SpriteSheetData spriteSheetData;
   final Vector velocity = Vector(0, 0);
+
+  final String name;
   final Vector position;
   final double gravity;
 
@@ -69,18 +62,17 @@ abstract class Fighter with KeyMap {
     );
   }
 
-  void update(Size size, FrameTime time) {
+  void update(FrameTime time, Size size) {
     position.x += (velocity.x * direction.side) * time.secondsPassed;
     position.y += velocity.y * time.secondsPassed;
 
-    _changeDirection();
-
+    _updateDirection();
     _updateState(time);
     _updateAnimation(time);
     _updateStageContraints(size);
   }
 
-  void draw(Canvas canvas, Paint paint) {
+  void draw(Canvas canvas, [Paint? paint]) {
     final originX = currentAnimationFrame.anchor!.x;
     final originY = currentAnimationFrame.anchor!.y;
 
@@ -100,7 +92,7 @@ abstract class Fighter with KeyMap {
         currentAnimationFrame.width,
         currentAnimationFrame.height,
       ),
-      paint,
+      paint ?? Paint(),
     );
     canvas.transform(Matrix4.identity().storage);
     canvas.restore();
@@ -225,8 +217,13 @@ abstract class Fighter with KeyMap {
     }
   }
 
-  void _changeDirection() {
-    if (oponnent == null) return;
+  void _updateDirection() {
+    if (oponnent == null ||
+        ![
+          FighterState.IDLE,
+          FighterState.WALK_FRONT,
+          FighterState.WALK_BACK,
+        ].contains(fighterState)) return;
 
     if (position.x + currentHitbox.x + currentHitbox.width <=
         oponnent!.position.x + oponnent!.currentHitbox.x) {
@@ -350,7 +347,7 @@ abstract class Fighter with KeyMap {
     // HitBox
     if (currentAnimationFrame.hitBox != null) {
       final paintHitBox = Paint()
-        ..color = Colors.green.withOpacity(.5)
+        ..color = (name == "ryu" ? Colors.green : Colors.red).withOpacity(.5)
         ..style = PaintingStyle.fill;
 
       canvas.drawRect(

@@ -16,7 +16,7 @@ class KenStage extends Stage {
         );
 
   @override
-  void draw(Canvas canvas, Size size) {
+  void draw(Canvas canvas) {
     final bg = SpritesData.kenStage(SpriteKey.KEN_BG)[0];
     canvas.drawImageRect(
       spriteSheetData.spriteSheet,
@@ -43,5 +43,5 @@ class KenStage extends Stage {
   }
 
   @override
-  void update(Size size, FrameTime time) {}
+  void update(FrameTime time, Size size) {}
 }

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
+
 import 'package:platform_game/game/types/frame_time.dart';
 import 'package:platform_game/game/types/sprite_sheet.dart';
 
@@ -9,7 +10,7 @@ abstract class Stage {
     required this.spriteSheetData,
   });
 
-  void update(Size size, FrameTime time);
+  void draw(Canvas canvas);
 
-  void draw(Canvas canvas, Size size);
+  void update(FrameTime time, Size size);
 }

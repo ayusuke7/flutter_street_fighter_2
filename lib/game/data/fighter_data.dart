@@ -1,3 +1,10 @@
+const initialVelocitys = {
+  FighterState.WALK_FRONT: FighterData.WALK_FRONT,
+  FighterState.WALK_BACK: -FighterData.WALK_BACK,
+  FighterState.JUMP_FRONT: FighterData.JUMP_FRONT,
+  FighterState.JUMP_BACK: -FighterData.JUMP_BACK,
+};
+
 enum FighterDir {
   LEFT,
   RIGTH;

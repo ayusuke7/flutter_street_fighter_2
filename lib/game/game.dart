@@ -8,6 +8,7 @@ import 'package:platform_game/game/game_stage.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
 import 'package:platform_game/game/types/vector.dart';
+import 'package:platform_game/overlays/hud.dart';
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -19,6 +20,7 @@ class Game extends StatefulWidget {
 class _GameStageState extends State<Game> {
   final frameTime = FrameTime(0, 0);
   final stage = KenStage();
+  final hud = Hud();
 
   final ryu = Ryu(
     position: Vector(50, GameData.STAGE_FLOOR),
@@ -58,7 +60,6 @@ class _GameStageState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
-    print("RYU: ${ryu.direction} / KEN: ${ken.direction}");
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color(0xFF3f3851),
@@ -79,9 +80,10 @@ class _GameStageState extends State<Game> {
                   size: GameData.GAME_VIEWPORT,
                   painter: GameStage(
                     time: frameTime,
-                    stage: stage,
                     player1: ryu,
                     player2: ken,
+                    stage: stage,
+                    hud: hud,
                   ),
                 ),
               ),
