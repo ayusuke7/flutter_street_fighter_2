@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:platform_game/game/camera.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
 import 'package:platform_game/game/figthers/ryu.dart';
 import 'package:platform_game/game/game_stage.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
-import 'package:platform_game/game/types/vector.dart';
 import 'package:platform_game/overlays/hud.dart';
 
 class Game extends StatefulWidget {
@@ -19,18 +19,20 @@ class Game extends StatefulWidget {
 
 class _GameStageState extends State<Game> {
   final frameTime = FrameTime(0, 0);
-  final stage = KenStage();
-  final hud = Hud();
 
-  final ryu = Ryu(
-    position: Vector(50, GameData.STAGE_FLOOR),
+  static final ryu = Ryu(
+    position: GameData.FIGHTER_POSITION_LEFT,
     direction: FighterDir.RIGTH,
   );
-  final ken = Ryu(
+  static final ken = Ryu(
     name: "ken",
-    position: Vector(330, GameData.STAGE_FLOOR),
+    position: GameData.FIGHTER_POSITION_RIGHT,
     direction: FighterDir.LEFT,
   );
+
+  final stage = KenStage();
+  final camera = Camera(ryu, ken);
+  final hud = Hud();
 
   void _gameLoop() {
     ryu.oponnent = ken;
@@ -80,6 +82,7 @@ class _GameStageState extends State<Game> {
                   size: GameData.GAME_VIEWPORT,
                   painter: GameStage(
                     time: frameTime,
+                    camera: camera,
                     player1: ryu,
                     player2: ken,
                     stage: stage,

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:platform_game/game/camera.dart';
 import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
 import 'package:platform_game/game/types/frame_time.dart';
@@ -62,19 +63,27 @@ abstract class Fighter with KeyMap {
     );
   }
 
-  void update(FrameTime time, Size size) {
+  void update(FrameTime time, Size size, Camera camera) {
     position.x += (velocity.x * direction.side) * time.secondsPassed;
     position.y += velocity.y * time.secondsPassed;
 
     _updateDirection();
     _updateState(time);
     _updateAnimation(time);
-    _updateStageContraints(size);
+    _updateStageContraints(size, camera);
   }
 
-  void draw(Canvas canvas, [Paint? paint]) {
+  void draw(Canvas canvas, Camera camera) {
     final originX = currentAnimationFrame.anchor!.x;
     final originY = currentAnimationFrame.anchor!.y;
+
+    var paint = Paint();
+    if (name == "ken") {
+      paint.colorFilter = const ColorFilter.mode(
+        Colors.black,
+        BlendMode.srcATop,
+      );
+    }
 
     canvas.save();
     canvas.scale(direction.side.toDouble(), 1);
@@ -87,17 +96,17 @@ abstract class Fighter with KeyMap {
         currentAnimationFrame.height,
       ),
       Rect.fromLTWH(
-        (position.x * direction.side).floorToDouble() - originX,
-        position.y.floorToDouble() - originY,
+        ((position.x - camera.position.x) * direction.side).floorToDouble() - originX,
+        (position.y - camera.position.y).floorToDouble() - originY,
         currentAnimationFrame.width,
         currentAnimationFrame.height,
       ),
-      paint ?? Paint(),
+      paint,
     );
     canvas.transform(Matrix4.identity().storage);
     canvas.restore();
 
-    _debug(canvas);
+    _debug(canvas, camera);
   }
 
   /* Privates Methods */
@@ -121,14 +130,14 @@ abstract class Fighter with KeyMap {
       case FighterState.CROUCH_DOWN:
         _handleIdleInit();
         break;
-      case FighterState.WALK_FRONT:
-      case FighterState.WALK_BACK:
-        _handleMoveInit();
-        break;
       case FighterState.JUMP_UP:
       case FighterState.JUMP_FRONT:
       case FighterState.JUMP_BACK:
         _handleJumpInit();
+        break;
+      case FighterState.WALK_FRONT:
+      case FighterState.WALK_BACK:
+        _handleMoveInit();
         break;
       default:
         break;
@@ -187,15 +196,15 @@ abstract class Fighter with KeyMap {
     }
   }
 
-  void _updateStageContraints(Size size) {
+  void _updateStageContraints(Size size, Camera camera) {
     var width = currentAnimationFrame.hitBox!.width;
 
-    if (position.x > size.width - width) {
-      position.x = size.width - width;
+    if (position.x > camera.position.x + size.width - width) {
+      position.x = camera.position.x + size.width - width;
     }
 
-    if (position.x < width) {
-      position.x = width;
+    if (position.x < camera.position.x + width) {
+      position.x = camera.position.x + width;
     }
 
     if (hasCollideOponnent) {
@@ -203,7 +212,7 @@ abstract class Fighter with KeyMap {
         position.x = max(
           (oponnent!.position.x + oponnent!.currentHitbox.x) -
               (currentHitbox.x + currentHitbox.width),
-          currentHitbox.width,
+          camera.position.x + currentHitbox.width,
         );
       }
 
@@ -211,7 +220,7 @@ abstract class Fighter with KeyMap {
         position.x = min(
           (oponnent!.position.x + oponnent!.currentHitbox.x + oponnent!.currentHitbox.width) +
               (currentHitbox.width + currentHitbox.x),
-          size.width - currentAnimationFrame.width,
+          camera.position.x + size.width - currentHitbox.width,
         );
       }
     }
@@ -343,7 +352,7 @@ abstract class Fighter with KeyMap {
 
   /* Debug */
 
-  void _debug(Canvas canvas) {
+  void _debug(Canvas canvas, Camera camera) {
     // HitBox
     if (currentAnimationFrame.hitBox != null) {
       final paintHitBox = Paint()
@@ -352,9 +361,9 @@ abstract class Fighter with KeyMap {
 
       canvas.drawRect(
         Rect.fromLTWH(
-          position.x + currentAnimationFrame.hitBox!.x,
-          position.y + currentAnimationFrame.hitBox!.y,
-          currentAnimationFrame.hitBox!.width,
+          position.x + (currentAnimationFrame.hitBox!.x * direction.side) - camera.position.x,
+          position.y + currentAnimationFrame.hitBox!.y - camera.position.y,
+          currentAnimationFrame.hitBox!.width * direction.side,
           currentAnimationFrame.hitBox!.height,
         ),
         paintHitBox,
@@ -368,15 +377,17 @@ abstract class Fighter with KeyMap {
         ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke;
 
-      final sideX = position.x.floorToDouble();
+      final sideX = (position.x - camera.position.x).floorToDouble();
+      final sideY = (position.y - camera.position.y).floorToDouble();
+
       canvas.drawLine(
-        Offset(sideX - 4.5, position.y.floorToDouble()),
-        Offset(sideX + 4.5, position.y.floorToDouble()),
+        Offset(sideX - 4.5, sideY),
+        Offset(sideX + 4.5, sideY),
         paintAnchor,
       );
       canvas.drawLine(
-        Offset(sideX, position.y.floorToDouble() - 4.5),
-        Offset(sideX, position.y.floorToDouble() + 4.5),
+        Offset(sideX, sideY - 4.5),
+        Offset(sideX, sideY + 4.5),
         paintAnchor,
       );
     }

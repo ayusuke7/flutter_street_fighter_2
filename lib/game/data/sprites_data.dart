@@ -82,7 +82,7 @@ abstract class SpritesData {
   static List<Sprite> kenStage(SpriteKey key) {
     return {
       SpriteKey.KEN_BG: [Sprite(72, 208, 768, 176)],
-      SpriteKey.KEN_BOAT: [Sprite(8, 16, 522, 180)],
+      SpriteKey.KEN_BOAT: [Sprite(8, 16, 521, 180)],
       SpriteKey.KEN_FLOOR: [Sprite(8, 392, 896, 72)],
     }[key]!;
   }

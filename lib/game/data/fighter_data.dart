@@ -74,4 +74,9 @@ abstract class FighterData {
   static const JUMP_FRONT = 170.0;
   static const JUMP_BACK = 200.0;
   static const JUMP_UP = 420.0;
+
+  static const PUSH_FRICTION = 66.0;
+
+  static const FRAME_FREEZE = 0;
+  static const FRAME_TRANSITION = -1;
 }
