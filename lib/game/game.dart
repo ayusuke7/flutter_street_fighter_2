@@ -6,9 +6,9 @@ import 'package:platform_game/game/data/fighter_data.dart';
 import 'package:platform_game/game/data/game_data.dart';
 import 'package:platform_game/game/figthers/ryu.dart';
 import 'package:platform_game/game/game_stage.dart';
+import 'package:platform_game/game/overlays/hud.dart';
 import 'package:platform_game/game/stages/ken_stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
-import 'package:platform_game/overlays/hud.dart';
 
 class Game extends StatefulWidget {
   const Game({super.key});

@@ -373,7 +373,7 @@ abstract class Fighter with KeyMap {
     // Anchor Origin
     if (currentAnimationFrame.anchor != null) {
       final paintAnchor = Paint()
-        ..color = Colors.white
+        ..color = const Color.fromRGBO(255, 255, 255, 1)
         ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke;
 

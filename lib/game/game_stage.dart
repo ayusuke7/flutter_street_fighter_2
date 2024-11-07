@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:platform_game/game/camera.dart';
 import 'package:platform_game/game/figthers/fighter.dart';
+import 'package:platform_game/game/overlays/hud.dart';
 import 'package:platform_game/game/stages/stage.dart';
 import 'package:platform_game/game/types/frame_time.dart';
-import 'package:platform_game/overlays/hud.dart';
 
 class GameStage extends CustomPainter {
   final FrameTime time;
